@@ -29,11 +29,12 @@ def get_location():
         lat = request.args.get('lat1')
         lon = request.args.get('long1')
         radius = request.args.get('distance')
-        p = Point(lat1, lon, radius) 
+        p = Point(lat, lon, radius) 
         distance(p)
+        return "Done"
 
 def distance(p):
-        cur.execute("""
+        cursor.execute("""
                     SELECT * FROM loc WHERE gc_to_sec(earth_distance(ll_to_earth(%(lat)s,%(long)s),
                     ll_to_earth(loc.latitude,loc.longitude)))
                     <=%(distance)s
@@ -44,12 +45,18 @@ def distance(p):
                         "distance":p.distance
                     }
                     )
-        nearby_pincodes = cur.fetchall()
+        nearby_pincodes = cursor.fetchall()
         pincodes_list = []
         for pin in nearby_pincodes:
             pincodes_list.append(pin[0])
 
         print(pincodes_list)
+        return "Points returned"
+
+
+
+
+
 
 
 @app.route('/post_location', methods=['POST'])
