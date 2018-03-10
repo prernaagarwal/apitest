@@ -24,12 +24,13 @@ def index():
 
 
 
-@app.route('/get_using_postgres/', methods=['GET'])
+@app.route('/get_using_postgres', methods=['GET'])
 def get_location():
-        lat = request.args.get('lat1')
-        lon = request.args.get('long1')
-        radius = request.args.get('distance')
-        p = Point(lat, lon, radius) 
+        lat = float(request.args.get('lat1'))
+        lon = float(request.args.get('long1'))
+        radius = float(request.args.get('distance'))
+        p = Point(lat, lon, radius * 1000) 
+        print(lat,lon,radius)
         distance(p)
         return "Done"
 
