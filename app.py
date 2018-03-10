@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, json, request
 from location1 import Location
+from point import Point
 import psycopg2
 
 app = Flask(__name__)
@@ -23,10 +24,12 @@ def index():
 
 
 
-@app.route('/get_using_postgres', methods=['GET'])
+@app.route('/get_using_postgres/', methods=['GET'])
 def get_location():
-        get_content = request.get_son(force=True)
-        p = Point(get_content)
+        lat = request.args.get('lat1')
+        lon = request.args.get('long1')
+        radius = request.args.get('distance')
+        p = Point(lat1, lon, radius) 
         distance(p)
 
 def distance(p):
