@@ -23,37 +23,76 @@ def index():
 
 
 
-
 @app.route('/get_using_postgres', methods=['GET'])
 def get_location():
         lat = float(request.args.get('lat1'))
-        lon = float(request.args.get('long1'))
+        lon = float(request.args.get('lon1'))
         radius = float(request.args.get('distance'))
-        p = Point(lat, lon, radius * 1000) 
+        p = Point(lat, lon, radius * 1000) # assumption: radius was given in km, converting it to m
         print(lat,lon,radius)
-        distance(p)
-        return "Done"
+        return distance(p)
 
 def distance(p):
-        cursor.execute("""
-                    SELECT * FROM loc WHERE gc_to_sec(earth_distance(ll_to_earth(%(lat)s,%(long)s),
-                    ll_to_earth(loc.latitude,loc.longitude)))
-                    <=%(distance)s
-                    """, 
-                    {
-                        "lat":p.lat1,
-                        "long": p.long1,
-                        "distance":p.distance
-                    }
-                    )
-        nearby_pincodes = cursor.fetchall()
-        pincodes_list = []
-        for pin in nearby_pincodes:
-            pincodes_list.append(pin[0])
+    cursor.execute("""
+                SELECT * FROM loc WHERE gc_to_sec(earth_distance(ll_to_earth(%(lat)s,%(lon)s),
+                ll_to_earth(loc.latitude,loc.longitude)))
+                <= %(distance)s
+                """, 
+                {
+                    "lat":p.lat1,
+                    "lon": p.long1,
+                    "distance":p.distance
+                }
+                )
+    nearby_pincodes = cursor.fetchall()
+    pincodes_list = []
+    for pin in nearby_pincodes:
+        pincodes_list.append(pin[0])
 
-        print(pincodes_list)
-        return "Points returned"
+    # print(pincodes_list)
 
+    return json.dumps(pincodes_list)
+
+
+
+
+
+
+
+@app.route('/get_using_self', methods = ['GET'])
+def self_get_location():
+    lat = float(request.args.get('lat1'))
+    lon = float(request.args.get('lon1'))
+    radius = float(request.args.get('distance'))
+    p = Point(lat, lon, radius) #assumption: radius is given in km
+    print(lat,lon,radius)
+    return self_distance(p)
+
+
+
+def self_distance(p):
+    
+    #https://gist.github.com/carlzulauf/1724506
+    # Haversine formula
+    # calculates great circle distance between two points
+    
+    cursor.execute("""
+                SELECT * FROM loc WHERE (2 * 6371 * asin(sqrt(sin(radians(loc.latitude-%(lat)s)/2)^2 + sin(radians(loc.longitude-%(lon)s)/2)^2 * 
+                cos(radians(%(lat)s)) * cos(radians(loc.latitude))))) <= %(distance)s 
+                """,
+                {
+                    "lat":p.lat1,
+                    "lon": p.long1,
+                    "distance":p.distance
+                }
+                )
+
+    self_nearby_pincodes = cursor.fetchall()
+    self_pincodes_list = []
+    for pin in self_nearby_pincodes:
+        self_pincodes_list.append(pin[0])
+
+    return json.dumps(self_pincodes_list)
 
 
 
