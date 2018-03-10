@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#Small script to show PostgreSQL and Pyscopg together
-#
+#Setting up psycopg2 and postgresql
+
 
 import psycopg2
 
