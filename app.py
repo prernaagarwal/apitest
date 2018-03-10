@@ -19,9 +19,35 @@ except:
 def index():
     return "Hello, World!"
 
-@app.route('/get_location')
+
+
+
+
+@app.route('/get_using_postgres', methods=['GET'])
 def get_location():
-        return "Hello, World!"
+        get_content = request.get_son(force=True)
+        p = Point(get_content)
+        distance(p)
+
+def distance(p):
+        cur.execute("""
+                    SELECT * FROM loc WHERE gc_to_sec(earth_distance(ll_to_earth(%(lat)s,%(long)s),
+                    ll_to_earth(loc.latitude,loc.longitude)))
+                    <=%(distance)s
+                    """, 
+                    {
+                        "lat":p.lat1,
+                        "long": p.long1,
+                        "distance":p.distance
+                    }
+                    )
+        nearby_pincodes = cur.fetchall()
+        pincodes_list = []
+        for pin in nearby_pincodes:
+            pincodes_list.append(pin[0])
+
+        print(pincodes_list)
+
 
 @app.route('/post_location', methods=['POST'])
 def add_location():
