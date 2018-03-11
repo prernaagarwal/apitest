@@ -33,8 +33,8 @@ try:
 					'place_type': feature['properties']['type'],
 					'parent_name':feature['properties']['parent'],
 					'geometry':feature['geometry']['type'],
-					'lat': coordinate[0],
-					'lon':coordinate[1]
+					'lat': coordinate[1],
+					'lon':coordinate[0]
 				}
    	 			)
 	#		count=count+1
