@@ -1,3 +1,7 @@
+/*
+given geojson file in easy to read format
+*/
+
 {
 	"type":"FeatureCollection",
 	"features":

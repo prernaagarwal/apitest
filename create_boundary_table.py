@@ -1,13 +1,16 @@
 #!/usr/bin/python
+
+"""
+this file creates the boundary table in boundaries database for stage 3
+"""
+
+
 import json, psycopg2, sys
 
 data = json.load(open('shapes_copy.json'))
 
 with open ('shapes_copy.json') as file:
 	data = json.load(file)
-
-	#print(data)
- 
 con = None
     
 try:

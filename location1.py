@@ -1,8 +1,11 @@
+"""
+class Location contains all the information about a certain place
+"""
 class Location(object):
 
 	def __init__(self,content):
 		        
-        	self.pincode = content['pincode']
+        self.pincode = content['pincode']
 		self.place = content['place']
 		self.city = content['city']
 		self.lat = content['latitude']

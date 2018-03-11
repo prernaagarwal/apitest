@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
  
+"""
+this file creates the loc table in pincodes database for stages 1 and 2
+"""
 import csv, psycopg2
 import sys
   
