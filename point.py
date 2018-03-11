@@ -1,4 +1,4 @@
-class Point(object):
+class Point1(object):
 
 	def __init__(self, lat, lon, radius):
 		self.lat1 = lat
@@ -7,7 +7,8 @@ class Point(object):
 
 
 
-		
+
+
 
 
 
