@@ -14,7 +14,7 @@ con = None
 try:
     con = psycopg2.connect("host='localhost' dbname='boundaries' user='postgres' password='password'")
     cursor = con.cursor()
-    #print("Connected")
+    print("Connected")
 except:
     print ("I am unable to connect to the database")
 
@@ -26,8 +26,8 @@ def index():
 
 @app.route('/containing_place', methods=['GET'])
 def get_place():
-        lat =  0
-        lon =  77.4143028259277
+        lat =  float(request.args.get('lat1'))
+        lon =  float(request.args.get('lon1'))
         p = Point1(lat, lon, 0)
         print(lon,lat)
         return find_place(p)
@@ -65,10 +65,9 @@ def find_place(p):
         
         if(polygon.contains(point)):
             return json.dumps(each_place)  
-    return json.dumps("The location is not contained within given cities")
+    return json.dumps("The location is not contained within the given cities")
 
 if __name__ == '__main__':
-    get_place()
     app.run(debug=True)
     cursor.close()
     con.close()
