@@ -17,8 +17,8 @@ except:
 
 
 def get_place():
-        lat = 77.219464
-        lon =  28.632949
+        lat =  28.4229575890799
+        lon =  77.4143028259277
         p = Point1(lat, lon, 0)
         print(lat,lon)
         return find_place(p)
@@ -42,8 +42,6 @@ def find_place(p):
         coordinates = []
         for new_row in new_rows:
             coordinates.append((new_row[6], new_row[5]))
-            #coordinates.append((new_row[5],new_row[6]))
-
         #https://stackoverflow.com/questions/43892459/check-if-geo-point-is-inside-or-outside-of-polygon-in-python
         
         polygon = Polygon(coordinates)
