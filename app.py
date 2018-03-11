@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, json, request
 from location1 import Location
-from point import Point
+from point import Point1
 import psycopg2
 
 app = Flask(__name__)
@@ -28,7 +28,7 @@ def get_location():
         lat = float(request.args.get('lat1'))
         lon = float(request.args.get('lon1'))
         radius = float(request.args.get('distance'))
-        p = Point(lat, lon, radius * 1000) # assumption: radius was given in km, converting it to m
+        p = Point1(lat, lon, radius * 1000) # assumption: radius was given in km, converting it to m
         print(lat,lon,radius)
         return distance(p)
 
@@ -59,12 +59,15 @@ def distance(p):
 
 
 
+
+
+
 @app.route('/get_using_self', methods = ['GET'])
 def self_get_location():
     lat = float(request.args.get('lat1'))
     lon = float(request.args.get('lon1'))
     radius = float(request.args.get('distance'))
-    p = Point(lat, lon, radius) #assumption: radius is given in km
+    p = Point1(lat, lon, radius) #assumption: radius is given in km
     print(lat,lon,radius)
     return self_distance(p)
 
@@ -93,6 +96,8 @@ def self_distance(p):
         self_pincodes_list.append(pin[0])
 
     return json.dumps(self_pincodes_list)
+
+
 
 
 
@@ -132,11 +137,41 @@ def exists(l):
                     "pincode": l.pincode,
                 }
                 )
-    return cursor.fetchone() is not None
+    result = cursor.fetchone()
+    p = Point1(l.lat, l.longitude, 1.5 * 1000)  #1.5 km
+    res = post_location_distance(p)
+
+    if (result is None):
+        if (len(res) == 0):
+            return False    # does not exit
+        else:
+            return True     # entry exists
+    else:
+        return True         # entry exists
  
- #l = Location(content['pincode'], content['place'], content['city'], content['latitude'], content['longitude'], content['accuracy']) 
-        
-      #  print(l)
+    #l = Location(content['pincode'], content['place'], content['city'], content['latitude'], content['longitude'], content['accuracy']) 
+    #  print(l)
+
+def post_location_distance(p):
+    cursor.execute("""
+                SELECT * FROM loc WHERE gc_to_sec(earth_distance(ll_to_earth(%(lat)s,%(lon)s),
+                ll_to_earth(loc.latitude,loc.longitude)))
+                <= %(distance)s
+                """, 
+                {
+                    "lat":p.lat1,
+                    "lon": p.long1,
+                    "distance":p.distance
+                }
+                )
+    nearby_pincodes = cursor.fetchall()
+    pincodes_list = []
+    for pin in nearby_pincodes:
+        pincodes_list.append(pin[0])
+
+    return pincodes_list
+
+
 
 
 if __name__ == '__main__':
