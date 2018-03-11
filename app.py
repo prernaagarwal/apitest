@@ -138,7 +138,7 @@ def exists(l):
                 }
                 )
     result = cursor.fetchone()
-    p = Point1(l.lat, l.longitude, 1.5 * 1000)  #1.5 km
+    p = Point1(l.lat, l.longitude, 1 * 1000)  #within 1 km
     res = post_location_distance(p)
 
     if (result is None):
@@ -152,6 +152,7 @@ def exists(l):
     #l = Location(content['pincode'], content['place'], content['city'], content['latitude'], content['longitude'], content['accuracy']) 
     #  print(l)
 
+#assumption: Within 1 km, pincode should not change
 def post_location_distance(p):
     cursor.execute("""
                 SELECT * FROM loc WHERE gc_to_sec(earth_distance(ll_to_earth(%(lat)s,%(lon)s),
