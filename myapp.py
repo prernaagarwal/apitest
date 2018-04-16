@@ -9,7 +9,7 @@ from flask import Flask, json, request
 from location1 import Location
 from point import Point1
 import psycopg2
-#import unittest
+
 
 app = Flask(__name__)
 
@@ -19,13 +19,15 @@ con = None
 try:
     con = psycopg2.connect("host='localhost' dbname='pincodes' user='postgres' password='password'")
     cursor = con.cursor()
-    print("Connected")
+    print("Connected to the database")
 except:
     print ("I am unable to connect to the database")
 
 @app.route('/')
 def index():
     return "Hello, World!"
+
+
 
 
 """
@@ -62,6 +64,10 @@ def distance(p):                #calculate distance between two points using ear
     # print(pincodes_list)
 
     return json.dumps(pincodes_list)
+
+
+
+
 
 
 
@@ -110,6 +116,9 @@ def self_distance(p):                    #calculate distance between two points 
 
 
 
+
+
+
 """
 Post : Post lat,lng of any location with pin code+address+city and you can add new pin code in db. This api will be /post_location. 
 """
@@ -117,17 +126,57 @@ Post : Post lat,lng of any location with pin code+address+city and you can add n
 @app.route('/post_location', methods=['POST'])
 def add_location():
         content = request.get_json(force=True)              # Get a json object from the body of Postman 
-        l = Location(content)  
-        if (not exists(l)):
-            save_location(l)
-            return json.dumps(l.toJSON())
-        else:
-            return "Entry exists"
+        
+        # input validation 
+        
+        if type(content['pincode']) is not unicode:
+            return "pincode is not a string"
 
-def test_add_location(self):
-    response = self.post('/post_locatopn', data = json.dumps(dict(pincode = "11190", 
-        place= "p", city= "c", latitude= 2830.4, longitude=8, accuracy= 1)), content_type = 'application/json')
-    self.assertEqual(response['latitude'], 2830.4)
+        if type(content['place']) is not unicode:
+            return "place is not a string"
+
+        if type(content['city']) is not unicode:
+            return "city is not a string"
+
+        if type(content['latitude']) is not float:
+            return "latitude is not a float"
+
+        if type(content['longitude']) is not float:
+            return "longitude is not a float"
+
+
+        l = Location(content)  
+        result = exists(l)
+        
+        if result == "does not exist":
+            save_location(l)
+            return "location saved"
+        else:
+            return result
+
+
+
+def exists(l):
+    cursor.execute('SELECT key FROM loc WHERE key = %(pincode)s', 
+                {
+                    "pincode": l.pincode,
+                }
+                )
+    result = cursor.fetchone()           #Check if pin code already exists 
+
+    if result is not None:
+        return "place with the same pincode exists"  #entry exists
+
+    #check if a place with similar coordinates is present in the database
+    p = Point1(l.lat, l.longitude, 1 * 1000)  #assumption: within 1 km pincode does not change
+    res = post_location_distance(p)
+
+    if (len(res) == 0):
+        return "does not exist"    # does not exit
+    else:
+        return "place with similar coordinates exists"     # entry exists
+
+
 
 def save_location(l):                                       # function to add entry to the database
     cursor.execute("""
@@ -145,31 +194,6 @@ def save_location(l):                                       # function to add en
 
                 ) 
     con.commit()
-
-    
-#def test_save_location():
-
-def exists(l):
-    cursor.execute('SELECT key FROM loc WHERE key = %(pincode)s', 
-                {
-                    "pincode": l.pincode,
-                }
-                )
-    result = cursor.fetchone()                                        #Check if pin code already exists 
-
-    p = Point1(l.lat, l.longitude, 1 * 1000)  #within 1 km
-    res = post_location_distance(p)
-
-    if (result is None):
-        if (len(res) == 0):
-            return False    # does not exit
-        else:
-            return True     # entry exists
-    else:
-        return True         # entry exists
- 
-    #l = Location(content['pincode'], content['place'], content['city'], content['latitude'], content['longitude'], content['accuracy']) 
-    #  print(l)
 
 """
 assumption: Within 1 km, pincode should not change
@@ -196,11 +220,21 @@ def post_location_distance(p):
     return pincodes_list
 
 
-
+#delete the entry added from testing.py
+@app.route('/delete_post_location', methods=['POST'])   
+def delete_location():
+    content = request.get_json(force=True) 
+    cursor.execute('DELETE FROM loc WHERE key = %(pincode)s',
+    {
+        "pincode": content['pincode']   
+    }
+    )
+    return "Entry deleted"
 
 
 
 if __name__ == '__main__':
+
     app.run(debug=True)
         
     cursor.close()

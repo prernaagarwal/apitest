@@ -1,0 +1,44 @@
+Test case: Input Errors
+
+City: 
+numeric
+city with long name with spaces (3 spaces)
+city with leading spaces and traifling spaces
+
+State
+numeric
+city with long name with spaces (3 spaces)
+
+Check against fixed state names in acountry 
+
+
+LAT
+String
+
+LON
+String
+
+Accuracy
+Null or Numeric
+
+Break code by sending additional data
+
+Existing City and state combo but new long/lat
+
+
+Actual Functional Testing
+====================
+
+Identical entry (PIN)
+Identical entry (Log/Lat)
+
+GET Functional:
+=============
+
+Lat/Log: String
+Very low radius
+very very large radius
+
+Exact value
+
+Medium value
