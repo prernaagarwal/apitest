@@ -28,7 +28,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : 110026,"place": "Punjabi Bagh","city": "New Delhi","latitude": 28.6488,"longitude":77.1726, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print(result.data)
+			print 'Test 1:' , result.data
 			self.assertEqual(result.data, "pincode is not a string")
     
     #Test2: place type is not a string
@@ -37,7 +37,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "110026","place": 5.0,"city": "New Delhi","latitude": 28.6488,"longitude":77.1726, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print(result.data)
+			print 'Test 2:' , result.data
 			self.assertEqual(result.data, "place is not a string")
     
     #Test3: city type is not a string
@@ -46,7 +46,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "110026","place": "Punjabi Bagh","city": 0,"latitude": 28.6488,"longitude":77.1726, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print(result.data)
+			print 'Test 3:' , result.data
 			self.assertEqual(result.data, "city is not a string")
 	
 	#Test4: latitude type is not a float
@@ -55,7 +55,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "110026","place": "Punjabi Bagh","city": "New Delhi","latitude": 28,"longitude":77.1726, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print(result.data)
+			print 'Test 4:' , result.data
 			self.assertEqual(result.data, "latitude is not a float")
 	
 	#Test5: latitude type is not a float
@@ -64,7 +64,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "110026","place": "Punjabi Bagh","city": "New Delhi","latitude": "hello","longitude":77.1726, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print(result.data)
+			print 'Test 5:' , result.data
 			self.assertEqual(result.data, "latitude is not a float")
 
     #Test6: longitude type is not a float
@@ -73,7 +73,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "110026","place": "Punjabi Bagh","city": "New Delhi","latitude": 28.6488,"longitude": 77, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print(result.data)
+			print 'Test 6:' , result.data
 			self.assertEqual(result.data, "longitude is not a float")
 
     #Test7: longitude type is not a float
@@ -82,7 +82,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "110026","place": "Punjabi Bagh","city": "New Delhi","latitude": 28.6488,"longitude":"hello", "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print(result.data)
+			print 'Test 7:' , result.data
 			self.assertEqual(result.data, "longitude is not a float")
 
     #Test8: place wth same pincode already exists in the database
@@ -91,7 +91,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "IN/110026","place": "Punjabi Bagh","city": "New Delhi","latitude": 28.6488,"longitude":77.1726, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print (result.data)
+			print 'Test 8:' , result.data
 			self.assertEqual(result.data, "place with the same pincode exists")
 
     #Test9: place with different pincode but same coordinates exist
@@ -100,7 +100,7 @@ class MyTest(unittest.TestCase):
 			sent = {"pincode" : "IN/111111","place": "Punjabi Bagh","city": "New Delhi","latitude": 28.6488,"longitude":77.1726, "accuracy": 0}
 			sent = json.dumps(sent)
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json')
-			print (result.data)
+			print 'Test 9:' , result.data
 			self.assertEqual(result.data, "place with similar coordinates exists")
     
     #Test10: different pincode but coordinates are close enough be same 
@@ -110,7 +110,7 @@ class MyTest(unittest.TestCase):
 			sent = json.dumps(sent)
 			client.post('http://localhost:5000/delete_post_location', data = sent, content_type = 'application/json') #Delete the test entry if it exists
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json') #Add test entry
-			print (result.data)
+			print 'Test 10:' , result.data
 			client.post('http://localhost:5000/delete_post_location', data = sent, content_type = 'application/json') #Delete the test entry if it exists
 			self.assertEqual(result.data, "place with similar coordinates exists")
 
@@ -121,7 +121,7 @@ class MyTest(unittest.TestCase):
 			sent = json.dumps(sent)
 			client.post('http://localhost:5000/delete_post_location', data = sent, content_type = 'application/json') #Delete the test entry if it exists
 			result = client.post('http://localhost:5000/post_location', data = sent, content_type = 'application/json') #Add test entry
-			print (result.data)
+			print 'Test 11:' , result.data
 			client.post('http://localhost:5000/delete_post_location', data = sent, content_type = 'application/json') #Delete the test entry if it exists
 			self.assertEqual(result.data, "location saved")
 
